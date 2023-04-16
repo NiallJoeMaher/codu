@@ -42,9 +42,7 @@ yarn-error.log*
 
 # Prisma generated client
 /prisma/generated
-
 !jest.config.js
-*.d.ts
 node_modules
 
 
