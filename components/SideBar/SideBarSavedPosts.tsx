@@ -18,8 +18,8 @@ export default React.memo(function SideBarSavedPosts() {
       .slice(0, howManySavedToShow);
 
   return (
-    <div className="overflow-hidden w-full">
-      <h3 className="text-2xl leading-6 font-semibold tracking-wide mb-4 mt-8">
+    <div className="w-full overflow-hidden">
+      <h3 className="mb-4 mt-8 text-2xl font-semibold leading-6 tracking-wide">
         Saved posts
       </h3>
       <div className="w-full">
@@ -30,7 +30,7 @@ export default React.memo(function SideBarSavedPosts() {
             }),
           )}
         {bookmarkStatus === "error" && (
-          <p className="font-medium py-4">
+          <p className="py-4 font-medium">
             Something went wrong fetching your saved posts... Refresh the page.
           </p>
         )}
@@ -61,7 +61,7 @@ export default React.memo(function SideBarSavedPosts() {
             },
           )}
         {bookmarkStatus === "success" && bookmarks?.length === 0 && (
-          <p className="font-medium py-4">
+          <p className="py-4 font-medium">
             Saved posts will be displayed in this section for easy access.
           </p>
         )}
@@ -77,15 +77,15 @@ export default React.memo(function SideBarSavedPosts() {
 
 function LoadingSkeleton() {
   return (
-    <div className="shadow p-4 w-full my-4 h-32 bg-white dark:bg-neutral-900 animate-pulse flex flex-col ">
-      <div className="grow flex items-center">
-        <div className="h-5 w-full bg-neutral-300 dark:bg-neutral-800 rounded"></div>
+    <div className="my-4 flex h-32 w-full animate-pulse flex-col bg-white p-4 shadow dark:bg-neutral-900 ">
+      <div className="flex grow items-center">
+        <div className="h-5 w-full rounded bg-neutral-300 dark:bg-neutral-800"></div>
       </div>
-      <div className="flex items-center grow">
-        <div className="mx-2 rounded-full bg-neutral-300 dark:bg-neutral-800 h-8 w-8"></div>
+      <div className="flex grow items-center">
+        <div className="mx-2 h-8 w-8 rounded-full bg-neutral-300 dark:bg-neutral-800"></div>
         <div className="ml-2">
-          <div className="h-2.5 w-36 bg-neutral-300 dark:bg-neutral-800 rounded mb-2"></div>
-          <div className="h-2.5 w-36 bg-neutral-300 dark:bg-neutral-800 rounded"></div>
+          <div className="mb-2 h-2.5 w-36 rounded bg-neutral-300 dark:bg-neutral-800"></div>
+          <div className="h-2.5 w-36 rounded bg-neutral-300 dark:bg-neutral-800"></div>
         </div>
       </div>
     </div>
