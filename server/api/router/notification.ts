@@ -5,7 +5,7 @@ import {
   DeleteNotificationSchema,
 } from "../../../schema/notification";
 import { notification } from "@/server/db/schema";
-import { count, desc, eq } from "drizzle-orm";
+import { and, count, desc, eq, isNotNull } from "drizzle-orm";
 
 export const notificationRouter = createTRPCRouter({
   delete: protectedProcedure
@@ -63,9 +63,11 @@ export const notificationRouter = createTRPCRouter({
             },
           },
         },
-        where: (notifications, { eq, and, lte }) =>
+        where: (notifications, { eq, and, lte, isNotNull }) =>
           and(
             eq(notifications.userId, userId),
+            isNotNull(notifications.postId),
+            isNotNull(notifications.notifierId),
             cursor ? lte(notifications.id, cursor) : undefined,
           ),
         limit: limit + 1,
@@ -88,7 +90,13 @@ export const notificationRouter = createTRPCRouter({
     const [notificationRes] = await ctx.db
       .select({ count: count() })
       .from(notification)
-      .where(eq(notification.userId, userId));
+      .where(
+        and(
+          eq(notification.userId, userId),
+          isNotNull(notification.postId),
+          isNotNull(notification.notifierId),
+        ),
+      );
 
     return notificationRes.count;
   }),

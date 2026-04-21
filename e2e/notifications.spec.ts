@@ -4,6 +4,7 @@ import {
   loggedInAsUserOne,
   loggedInAsUserTwo,
   createNotification,
+  createOrphanNotification,
   clearNotifications,
 } from "./utils";
 import { E2E_USER_ONE_ID, E2E_USER_TWO_ID } from "./constants";
@@ -37,6 +38,31 @@ test.describe("Notifications Page", () => {
       ).toBeVisible();
       // Should show empty state message
       await expect(page.getByText(/No new notifications/)).toBeVisible();
+    });
+
+    test("Should treat orphaned notifications (NULL postId) as absent", async ({
+      page,
+    }) => {
+      // Regression: migration 0019 left rows with NULL postId. Previously
+      // getCount included them while the page filtered them out client-side,
+      // producing a non-zero badge with an invisible list. Both queries must
+      // now ignore orphans consistently.
+      await createOrphanNotification({
+        userId: E2E_USER_TWO_ID,
+        notifierId: E2E_USER_ONE_ID,
+      });
+
+      await page.goto("http://localhost:3000/notifications");
+
+      await expect(
+        page.getByRole("heading", { name: "Notifications" }),
+      ).toBeVisible();
+      await expect(page.getByText(/No new notifications/)).toBeVisible();
+      // "Mark all as read" is driven by getCount; if getCount still counted
+      // the orphan it would be rendered and this would fail.
+      await expect(
+        page.getByRole("button", { name: "Mark all as read" }),
+      ).toHaveCount(0);
     });
   });
 
