@@ -247,6 +247,36 @@ export async function createNotification({
   }
 }
 
+export async function createOrphanNotification({
+  userId,
+  notifierId,
+  type = 0,
+}: {
+  userId: string;
+  notifierId: string | null;
+  type?: number;
+}) {
+  const db = drizzle(
+    postgres("postgresql://postgres:secret@127.0.0.1:5432/postgres"),
+  );
+
+  try {
+    const [row] = await db
+      .insert(notification)
+      .values({
+        userId,
+        notifierId: notifierId ?? null,
+        type,
+        // postId intentionally omitted -> NULL, simulating the orphaned rows
+        // left behind by the 0019 Post->posts FK migration.
+      })
+      .returning();
+    return row;
+  } catch (err) {
+    throw Error(`Error while creating orphan E2E notification: ${err}`);
+  }
+}
+
 export async function clearNotifications(userId: string) {
   const db = drizzle(
     postgres("postgresql://postgres:secret@127.0.0.1:5432/postgres"),
